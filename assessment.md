@@ -1,68 +1,110 @@
 # Assessment / Quiz
 
-## Overview
-- **Lesson:** [title / module.lesson]
-- **Format:** 10 questions (mix MCQ / True–False / Short Answer)
-- **Time:** ~10–15 minutes
-- **Scoring:** 1 point each (unless stated)
-
 ## Questions
 
-### Q1 (MCQ)
-[Question?]  
-A. [ ]  
-B. [ ]  
-C. [ ]  
-D. [ ]  
-**Answer:** [A/B/C/D] — [1-line reason]
+### Q1 (True/False)
 
-### Q2 (MCQ)
-[Question?]  
-A. [ ]  
-B. [ ]  
-C. [ ]  
-D. [ ]  
-**Answer:** [A/B/C/D] — [1-line reason]
+Q1: Authentication answers the question "Who are you?" while Authorization answers "What are you allowed to do?"
 
-### Q3 (True/False)
-[Statement]  
-**Answer:** [True/False] — [1-line reason]
+A - True
 
-### Q4 (True/False)
-[Statement]  
-**Answer:** [True/False] — [1-line reason]
+B - False
 
-### Q5 (Short Answer)
-[Prompt]  
-**Expected:** [1–2 key points]
+---
 
-### Q6 (Short Answer)
-[Prompt]  
-**Expected:** [1–2 key points]
+Q2: What does Spring Security use to intercept HTTP requests before they reach your controller?
 
-### Q7 (MCQ)
-[Question?]  
-A. [ ]  
-B. [ ]  
-C. [ ]  
-D. [ ]  
-**Answer:** [A/B/C/D] — [1-line reason]
+A - Controller Advice
 
-### Q8 (MCQ)
-[Question?]  
-A. [ ]  
-B. [ ]  
-C. [ ]  
-D. [ ]  
-**Answer:** [A/B/C/D] — [1-line reason]
+B - Filter Chain
 
-### Q9 (True/False)
-[Statement]  
-**Answer:** [True/False] — [1-line reason]
+C - Interceptor Chain
 
-### Q10 (Short Answer)
-[Prompt]  
-**Expected:** [1–2 key points]
+D - Request Handler
+
+---
+
+Q3: By default, Spring Security follows a "Secure by Default" philosophy and protects all endpoints?
+
+A - True
+
+B - False
+
+---
+
+Q4: Which password encoding algorithm is recommended for securely hashing passwords in Spring Security?
+
+A - MD5
+
+B - SHA-1
+
+C - BCrypt
+
+D - Plain text
+
+---
+
+Q5: What is the default username when you first add Spring Security to a Spring Boot project?
+
+A - admin
+
+B - root
+
+C - user
+
+D - security
+
+---
+
+Q6: The UserDetailsService is responsible for loading user information during the authentication process?
+
+A - True
+
+B - False
+
+---
+
+Q7: Which annotation is used to enable web security in a Spring Boot application?
+
+A - @EnableSecurity
+
+B - @EnableWebSecurity
+
+C - @SecurityEnabled
+
+D - @WebSecurity
+
+---
+
+Q8: What HTTP status code is returned when a user is authenticated but does not have permission to access a resource?
+
+A - 401 Unauthorized
+
+B - 403 Forbidden
+
+C - 404 Not Found
+
+D - 500 Internal Server Error
+
+---
+
+Q9: Passwords should never be stored in plain text in a real application?
+
+A - True
+
+B - False
+
+---
+
+Q10: Which method is used to define authorization rules for specific HTTP methods and endpoints?
+
+A - .authorizeRequests()
+
+B - .authorizeHttpRequests()
+
+C - .permitAll()
+
+D - .authenticated()
 
 ## Notes
 - Keep each question atomic and aligned to the lesson objectives.
