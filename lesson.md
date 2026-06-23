@@ -61,6 +61,8 @@ spring.security.user.password=password123
 
 **Note**: Once you add these lines and restart the app, the console will no longer print a random password. You can now log in using `admin` and `password123`. This is a quick way to handle **Basic Authentication** during early development.
 
+> ⚠️ **Production Warning**: Plain-text passwords in `application.properties` are **development-only**. Never commit this file to version control with real credentials. In production, credentials are injected via environment variables or a secrets manager (e.g., AWS Secrets Manager, HashiCorp Vault), and the properties file is added to `.gitignore`. We will use the proper approach when we move to a database-backed user store.
+
 ---
 
 ## Part 3: Custom Configuration & Password Encoding
@@ -77,8 +79,27 @@ In VS Code, right-click your main package folder → **New Folder** → name it 
 **Demo Goal**: Define a Password Encoder and secure the `POST /customers` endpoint so only an `ADMIN` can create customers.
 
 ```java
+package com.example.simplecrm.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+
 @Configuration
-@EnableWebSecurity
+// NOTE: @EnableWebSecurity is NOT required in Spring Boot applications.
+// Spring Boot's auto-configuration automatically detects any SecurityFilterChain bean.
+// This annotation is a holdover from plain Spring (non-Boot) projects where you had
+// to opt in to security manually. You will see it in older tutorials and legacy codebases,
+// but modern Spring Boot projects omit it. It does no harm here, but do not treat it as mandatory.
 public class SecurityConfig {
 
     // Define the Password Encoder Bean.
@@ -91,7 +112,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // 1. Disable CSRF to allow Postman to send POST/PUT/DELETE requests.
+            // 1. Disable CSRF protection.
+            //    CSRF attacks target browser-based apps that use cookies for session management.
+            //    Our REST API uses stateless Basic Auth — no session cookies are involved,
+            //    so CSRF protection is not needed here. This is standard practice for REST APIs.
+            //    (Postman is simply our testing client; the real reason to disable CSRF is
+            //    the stateless, cookie-free nature of REST.)
             .csrf(csrf -> csrf.disable())
 
             // 2. Define Authorization rules
@@ -115,7 +141,7 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
         // Create a standard staff user.
-        // We use passwordEncoder.encode() to store the password securely.
+        // We use passwordEncoder.encode() to store the password securely as a BCrypt hash.
         UserDetails sales = User.builder()
             .username("sales_rep")
             .password(passwordEncoder.encode("sales123"))
@@ -149,6 +175,8 @@ Spring Security then compares the encoded password returned by `UserDetailsServi
 
 In real-world applications, `UserDetailsService` typically loads users from a database. In this lesson, we use an **in-memory implementation** so you can focus on understanding how Spring Security works without introducing database complexity.
 
+> 💡 **Instructor Note**: The `InMemoryUserDetailsManager` we use here implements `UserDetailsService` under the hood — this is the interface-over-implementation principle again. In a later lesson, you will swap this out for a `JpaUserDetailsService` that loads users from the database. The `SecurityConfig` wiring stays exactly the same; only the implementation changes.
+
 If this concept feels difficult at first, that is completely normal. Many developers treat the `UserDetailsService` as standard configuration code and reuse common patterns. With practice, its role in the authentication flow will become much clearer.
 
 ---
@@ -172,9 +200,10 @@ Update your `SecurityConfig.java` to enforce these organisational rules:
 ## Summary
 * **Authentication vs. Authorization**: Authentication identifies who you are (ID check); Authorization determines your access level (keycard check).
 * **Filter Chain**: Spring Security acts as a series of checkpoints (Filters) that validate requests before they reach your RestController.
-* **Properties Config**: You can quickly set a single user and password in `application.properties` for simple development tasks.
+* **Properties Config**: You can quickly set a single user and password in `application.properties` for simple development tasks — never use plain-text credentials in production.
 * **BCrypt Password Encoder**: Passwords must never be stored in plain text. We use the BCrypt algorithm to hash passwords securely.
 * **Role-Based Access Control (RBAC)**: By assigning Roles (`USER`, `ADMIN`) to users, we can restrict specific HTTP methods (like `DELETE` or `POST`) to authorised personnel only.
+* **`@EnableWebSecurity`**: Not required in Spring Boot — auto-configuration handles security bean detection automatically.
 
 ---
 
